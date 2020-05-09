@@ -4,7 +4,6 @@ pd.options.mode.chained_assignment = None
 import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import LabelEncoder
-import os
 
 sns.set_style("darkgrid")
 
@@ -70,6 +69,26 @@ def get_bar_plot(data, feature, bundle_small):
 	ax.legend(h, ["Non-Fraud","Fraud"], title="Classes", loc='upper right')
 	plt.savefig('figures/'+feature+'.png')
 	plt.show()
+
+def get_heatmap(all_data,fraud_data,feature_one,feature_two):
+	f, (ax) = plt.subplots(1,figsize =(6,4))
+	pdata = all_data.groupby([feature_one, feature_two]).size().reset_index(name='sum')
+	processed_all = pdata.pivot(index=feature_one,columns=feature_two, values='sum')
+	sns.heatmap(processed_all)
+	ax.set_title("All transactions")
+	plt.savefig('figures/heatmap-'+feature_one+'-'+feature_two+'-all.png')
+	plt.show()
+	f, (ax) = plt.subplots(1,figsize =(6,4))
+	pdata = fraud_data.groupby([feature_one, feature_two]).size().reset_index(name='sum')
+	processed_fraud = pdata.pivot(index=feature_one,columns=feature_two, values='sum')
+	sns.heatmap(processed_fraud)
+	ax.set_title("Fraud transactions")
+	plt.savefig('figures/heatmap-'+feature_one+'-'+feature_two+'-fraud.png')
+	plt.show()
+
+
+
+
 
 	
 
