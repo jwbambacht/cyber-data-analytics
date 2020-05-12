@@ -88,8 +88,8 @@ def get_non_fraud(data):
 	return data.loc[data['simple_journal'] == 0]
 
 def get_X_y(data):
-	y = data['simple_journal']
-	X = data.drop(columns='simple_journal')
+	y = np.array(data['simple_journal'])
+	X = np.array(data.drop(columns='simple_journal'))
 
 	return X,y
 
@@ -126,7 +126,6 @@ def smote_dataset(X_UNSMOTEd, y_UNSMOTEd,N):
 	X_SMOTEd = X_UNSMOTEd
 	y_SMOTEd = y_UNSMOTEd
 
-	# Every iteration adds the initial number of fraud cases to the dataset
 	for i in range(N):
 		unique, counts = np.unique(y_UNSMOTEd,return_counts=True)
 		minority_shape = dict(zip(unique, counts))[1]
@@ -143,7 +142,7 @@ def smote_dataset(X_UNSMOTEd, y_UNSMOTEd,N):
 
 	return X_SMOTEd, y_SMOTEd
 
-def classify(classifier, X_train, y_train, X_test):
+def classify(classifier, X, y, N):
 	if classifier == "KNN":
 		clf = KNeighborsClassifier(n_neighbors=3)
 	elif classifier == "RandomForest":
@@ -161,11 +160,15 @@ def classify(classifier, X_train, y_train, X_test):
 	elif classifier == "QuadraticDiscriminantAnalysis":
 		clf = QuadraticDiscriminantAnalysis()
 
+	# Create train and test sets and only apply SMOTE to train sets
+	X_train, X_test, y_train, y_test = imb.train_test(X, y, 0.3)
+	X_train, y_train = smote_dataset(X_train, y_train, N)
+
 	clf.fit(X_train,y_train)
 	predicted = clf.predict(X_test)
 	predicted_proba = clf.predict_proba(X_test)
 
-	return clf, predicted, predicted_proba
+	return clf, predicted, predicted_proba, y_test
 
 def get_performance(clf, predicted, y_test,name):
 

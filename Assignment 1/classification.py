@@ -56,11 +56,6 @@ def pre_process(data):
 	currency_convert = {"GBP": 0.88, "AUD": 1.67, "SEK": 10.62, "MXN": 26.03, "NZD": 1.78}
 	data["amount"] = data.apply(lambda x: int(x["amount"]/currency_convert[x["currencycode"]]),axis=1)
 
-	# Manually encode this feature into three values
-	# pdata.loc[pdata["shopperinteraction"] == "Ecommerce", "shopperinteraction"] = 0
-	# pdata.loc[pdata["shopperinteraction"] == "ContAuth", "shopperinteraction"] = 1
-	# pdata.loc[pdata["shopperinteraction"] == "POS", "shopperinteraction"] = 2
-
 	# Set category 3-6 to 3 since it doesn't matter what it is among them
 	pdata.loc[pdata["cvcresponsecode"] > 3, "cvcresponsecode"] = 3
 
@@ -74,10 +69,7 @@ def pre_process(data):
 	# Automatically encode categorical columns to be applicable in the classifiers
 	le = LabelEncoder()
 	pdata['issuercountrycode'] = le.fit_transform(pdata['issuercountrycode'].astype(str))
-	# pdata['txvariantcode'] = le.fit_transform(pdata['txvariantcode'])
-	# pdata['currencycode'] = le.fit_transform(pdata['currencycode'].astype(str))
 	pdata['shoppercountrycode'] = le.fit_transform(pdata['shoppercountrycode'].astype(str))
-	# pdata['accountcode'] = le.fit_transform(pdata['accountcode'])
 	pdata['mail_id'] = le.fit_transform(pdata['mail_id'])
 	pdata['ip_id'] = le.fit_transform(pdata['ip_id'])
 	pdata['card_id'] = le.fit_transform(pdata['card_id'])
@@ -117,72 +109,3 @@ def set_threshold(y_prob, threshold):
 			y_pred[i] = 0
 
 	return y_pred
-
-def classify_knn(data, N):
-	X, y = clf.get_X_y(data)
-	kf = StratifiedKFold(n_splits=10, shuffle=True,random_state=13)
-
-	classifier = KNeighborsClassifier(n_neighbors=3)
-
-	tp_total = 0
-	tn_total = 0
-	fp_total = 0
-	fn_total = 0
-
-	for train_index, test_index in kf.split(X, y):
-	# for train_index, test_index in kf.split(X):
-		X_train, X_test, y_train, y_test = X[train_index], X[test_index], y[train_index], y[test_index]
-
-		X_train, y_train = clf.smote_dataset(X_train, y_train, N)
-
-		classifier.fit(X_train,y_train)
-		y_prob = classifier.predict_proba(X_test)
-		y_pred = clf.set_threshold(y_prob,0.51)
-
-		tn, fp, fn, tp = confusion_matrix(y_test,y_pred).ravel()
-		tp_total += tp
-		tn_total += tn
-		fp_total += fp
-		fn_total += fn
-
-	print(f"TruePositives: {tp_total}")
-	print(f"TrueNegatives: {tn_total}")
-	print(f"FalsePositives: {fp_total}")
-	print(f"FalseNegatives: {fn_total}")
-
-def classify_random_forest(classifierName, data, N):
-	X, y = clf.get_X_y(data)
-	X, y = clf.smote_dataset(X, y, N)
-	kf = KFold(n_splits=10,shuffle=True,random_state=13)
-
-	classifier = RandomForestClassifier(random_state=0, n_estimators=100)
-
-	tp_total = 0
-	tn_total = 0
-	fp_total = 0
-	fn_total = 0
-
-	for train_index, test_index in kf.split(X):
-		X_train, X_test, y_train, y_test = X[train_index], X[test_index], y[train_index], y[test_index]
-
-		classifier.fit(X_train,y_train)
-		y_pred = classifier.predict(X_test)
-
-		tn, fp, fn, tp = confusion_matrix(y_test,y_pred).ravel()
-		tp_total += tp
-		tn_total += tn
-		fp_total += fp
-		fn_total += fn
-
-	print(f"TruePositives: {tp_total}")
-	print(f"TrueNegatives: {tn_total}")
-	print(f"FalsePositives: {fp_total}")
-	print(f"FalseNegatives: {fn_total}")
-
-def get_performance(clf, predicted, y_test,name):
-
-	print(f"{name}:")
-	print(f"Accuracy: {accuracy_score(y_test, predicted)}")
-	print(f"Precision: {precision_score(y_test, predicted)}")
-	print(f"Recall: {recall_score(y_test, predicted)}")
-	print(f"F1: {f1_score(y_test, predicted)}\n")
