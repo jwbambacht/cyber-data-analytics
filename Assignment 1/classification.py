@@ -14,6 +14,7 @@ from sklearn.discriminant_analysis import LinearDiscriminantAnalysis, QuadraticD
 from sklearn.model_selection import StratifiedKFold
 from sklearn.svm import SVC
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score, roc_curve, plot_roc_curve, confusion_matrix
+from sklearn.tree import _tree
 import random
 import classification as clf
 
@@ -56,26 +57,33 @@ def pre_process(data):
 	data["amount"] = data.apply(lambda x: int(x["amount"]/currency_convert[x["currencycode"]]),axis=1)
 
 	# Manually encode this feature into three values
-	pdata.loc[pdata["shopperinteraction"] == "Ecommerce", "shopperinteraction"] = 0
-	pdata.loc[pdata["shopperinteraction"] == "ContAuth", "shopperinteraction"] = 1
-	pdata.loc[pdata["shopperinteraction"] == "POS", "shopperinteraction"] = 2
+	# pdata.loc[pdata["shopperinteraction"] == "Ecommerce", "shopperinteraction"] = 0
+	# pdata.loc[pdata["shopperinteraction"] == "ContAuth", "shopperinteraction"] = 1
+	# pdata.loc[pdata["shopperinteraction"] == "POS", "shopperinteraction"] = 2
 
 	# Set category 3-6 to 3 since it doesn't matter what it is among them
 	pdata.loc[pdata["cvcresponsecode"] > 3, "cvcresponsecode"] = 3
 
+	# One hot encoding of the categorical features
+	pdata = pd.concat([pdata,pd.get_dummies(pdata["txvariantcode"],prefix="txvariantcode")],axis=1)
+	pdata = pd.concat([pdata,pd.get_dummies(pdata["currencycode"],prefix="currencycode")],axis=1)
+	pdata = pd.concat([pdata,pd.get_dummies(pdata["shopperinteraction"],prefix="shopperinteraction")],axis=1)
+	pdata = pd.concat([pdata,pd.get_dummies(pdata["cvcresponsecode"],prefix="cvcresponsecode")],axis=1)
+	pdata = pd.concat([pdata,pd.get_dummies(pdata["accountcode"],prefix="accountcode")],axis=1)
+
 	# Automatically encode categorical columns to be applicable in the classifiers
 	le = LabelEncoder()
 	pdata['issuercountrycode'] = le.fit_transform(pdata['issuercountrycode'].astype(str))
-	pdata['txvariantcode'] = le.fit_transform(pdata['txvariantcode'])
-	pdata['currencycode'] = le.fit_transform(pdata['currencycode'].astype(str))
+	# pdata['txvariantcode'] = le.fit_transform(pdata['txvariantcode'])
+	# pdata['currencycode'] = le.fit_transform(pdata['currencycode'].astype(str))
 	pdata['shoppercountrycode'] = le.fit_transform(pdata['shoppercountrycode'].astype(str))
-	pdata['accountcode'] = le.fit_transform(pdata['accountcode'])
+	# pdata['accountcode'] = le.fit_transform(pdata['accountcode'])
 	pdata['mail_id'] = le.fit_transform(pdata['mail_id'])
 	pdata['ip_id'] = le.fit_transform(pdata['ip_id'])
 	pdata['card_id'] = le.fit_transform(pdata['card_id'])
 
 	# Remove columns since they do not add value to the classification
-	pdata.drop(columns=['txid','bookingdate','bin','creationdate','cardverificationcodesupplied'],axis=1,inplace=True)
+	pdata.drop(columns=['txid','bookingdate','creationdate','cardverificationcodesupplied','shopperinteraction','txvariantcode','cvcresponsecode','accountcode','currencycode'],axis=1,inplace=True)
 
 	# Change any value that can't be used by the classifiers
 	pdata = clean_dataset(pdata)
@@ -95,54 +103,10 @@ def get_non_fraud(data):
 	return data.loc[data['simple_journal'] == 0]
 
 def get_X_y(data):
-	y = np.array(data['simple_journal'])
-	X = np.array(data.drop(columns='simple_journal'))
+	y = data['simple_journal']
+	X = data.drop(columns='simple_journal')
 
 	return X,y
-
-def nearest_neighbor(data):
-	nn = NearestNeighbors(n_neighbors=5, metric='euclidean', algorithm='kd_tree').fit(data)
-	dist, index = nn.kneighbors(data)
-	return index
-
-def smote_item(data):
-	indices = nearest_neighbor(data)
-
-	result = []
-
-	for m in range(len(indices)):
-		t = data[indices[m]]
-		new_t = pd.DataFrame(t)
-		result.append([])
-
-		for j in range(len(new_t.columns)):
-			result[m].append(random.choice(new_t[j]))
-
-	return result
-
-def smote_dataset(X_UNSMOTEd, y_UNSMOTEd,N):
-
-	X_UNSMOTEd = np.array(X_UNSMOTEd)
-	y_UNSMOTEd = np.array(y_UNSMOTEd)
-
-	X_SMOTEd = X_UNSMOTEd
-	y_SMOTEd = y_UNSMOTEd
-
-	for i in range(N):
-		unique, counts = np.unique(y_UNSMOTEd,return_counts=True)
-		minority_shape = dict(zip(unique, counts))[1]
-
-		x = np.ones((minority_shape, X_UNSMOTEd.shape[1]))
-		x = [X_UNSMOTEd[i] for i, v in enumerate(y_UNSMOTEd) if v == 1.0]
-		x = np.array(x)
-
-		X_sampled = smote_item(x)
-		X_SMOTEd = np.concatenate((X_SMOTEd, X_sampled), axis=0)
-
-		y_sampled = np.ones(minority_shape)
-		y_SMOTEd = np.concatenate((y_SMOTEd, y_sampled), axis=0)
-
-	return X_SMOTEd, y_SMOTEd
 
 def set_threshold(y_prob, threshold):
 	y_pred = y_prob[:,1]
@@ -157,7 +121,6 @@ def set_threshold(y_prob, threshold):
 def classify_knn(data, N):
 	X, y = clf.get_X_y(data)
 	kf = StratifiedKFold(n_splits=10, shuffle=True,random_state=13)
-	# kf = KFold(n_splits=10,random_state=33)
 
 	classifier = KNeighborsClassifier(n_neighbors=3)
 
@@ -223,18 +186,3 @@ def get_performance(clf, predicted, y_test,name):
 	print(f"Precision: {precision_score(y_test, predicted)}")
 	print(f"Recall: {recall_score(y_test, predicted)}")
 	print(f"F1: {f1_score(y_test, predicted)}\n")
-
-
-
-
-	
-
-	
-
-	
-
-
-
-
-
-
