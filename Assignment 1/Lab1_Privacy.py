@@ -147,7 +147,7 @@ def plotRocs():
         # X_train = data_train.drop(['simple_journal'], axis=1)
         # X_test = X_test.drop(['simple_journal'], axis=1)
         
-        # Drop the output colum         
+        # Drop the output column         
         X_train = X_train.drop(['simple_journal'], axis=1)
         X_test = X_test.drop(['simple_journal'], axis=1)
 
