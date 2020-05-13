@@ -67,7 +67,7 @@ def get_bar_plot(data, feature, bundle_small):
 	ax.set(xlabel = feature)
 	h, l = ax.get_legend_handles_labels()
 	ax.legend(h, ["Non-Fraud","Fraud"], title="Classes", loc='upper right')
-	plt.savefig('figures/'+feature+'.png')
+	# plt.savefig('figures/'+feature+'.png')
 	plt.show()
 
 def get_heatmap(all_data,fraud_data,feature_one,feature_two):
@@ -76,14 +76,14 @@ def get_heatmap(all_data,fraud_data,feature_one,feature_two):
 	processed_all = pdata.pivot(index=feature_one,columns=feature_two, values='sum')
 	sns.heatmap(processed_all)
 	ax.set_title("All transactions")
-	plt.savefig('figures/heatmap-'+feature_one+'-'+feature_two+'-all.png')
+	# plt.savefig('figures/heatmap-'+feature_one+'-'+feature_two+'-all.png')
 	plt.show()
 	f, (ax) = plt.subplots(1,figsize =(6,4))
 	pdata = fraud_data.groupby([feature_one, feature_two]).size().reset_index(name='sum')
 	processed_fraud = pdata.pivot(index=feature_one,columns=feature_two, values='sum')
 	sns.heatmap(processed_fraud)
 	ax.set_title("Fraud transactions")
-	plt.savefig('figures/heatmap-'+feature_one+'-'+feature_two+'-fraud.png')
+	# plt.savefig('figures/heatmap-'+feature_one+'-'+feature_two+'-fraud.png')
 	plt.show()
 
 
