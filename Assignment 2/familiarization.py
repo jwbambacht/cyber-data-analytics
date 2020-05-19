@@ -21,32 +21,12 @@ def pre_process(data):
 
 	return data
 
-def plot_sample_signals(data):
-
+def plot_signal(data,col,start,end, title,color):
 	f,ax = plt.subplots(figsize=(22,3))
-	f.suptitle('Water level of tank 1')
-	ax = sns.lineplot(data=data.loc[0:720,"L_T1"],color='blue')
-	ax.set_xticks(range(0,721,24))
-	plt.show()
-
-	f,ax = plt.subplots(figsize=(22,3))
-	f.suptitle('Flow through pump 1')
-	ax = sns.lineplot(data=data.loc[0:720,"F_PU1"],color='green')
-	ax.set_xticks(range(0,721,24))
-	plt.show()
-
-	f,ax = plt.subplots(figsize=(22,3))
-	f.suptitle('Status of pump 2')
-	ax = sns.lineplot(data=data.loc[0:720,"S_PU2"],color='red')
-	ax.set_xticks(range(0,721,24))
-	ax.set_yticks((0,1))
-	plt.show()
-
-	f,ax = plt.subplots(figsize=(22,3))
-	f.suptitle('Pressure of joint 280')
-	ax = sns.lineplot(data=data.loc[0:720,"P_J280"],color='black')
-	ax.set_xticks(range(0,721,24))
-	plt.show() 
+	f.suptitle(title)
+	ax = sns.lineplot(data=data.loc[start:end,col],color=color)
+	ax.set_xticks(range(start,end+1,24))
+	plt.show()	
 
 def plot_correlation(data):
 	tdata = data.drop(columns=["date","hour","ATT_FLAG"],axis=1)
@@ -60,17 +40,7 @@ def plot_correlation(data):
 	ax = sns.heatmap(correlation)
 	ax.set_title('Correlation between signals')
 	plt.show()
-
-def plot_correlation_examples(tdata):
-	f, ax = plt.subplots(figsize=(22,4))
-	ax = sns.lineplot(data=tdata.loc[0:720,"F_PU2"],color='blue')
-	ax.set_title('Flow in pump 2')
-	plt.show()
-
-	f, ax = plt.subplots(figsize=(22,4))
-	ax = sns.lineplot(data=tdata.loc[0:720,"S_PU2"],color='red')
-	ax.set_title('Status of pump 2')
-	plt.show()
+	
 
 
 
