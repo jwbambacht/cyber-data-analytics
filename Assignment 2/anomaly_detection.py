@@ -8,7 +8,7 @@ from sklearn.neighbors import LocalOutlierFactor
 
 def compute_lof(data, signals, max_neighbours):  
     lof_curvs = [ [] for _ in range(len(signals)) ]     
-    neighbour_array = range(2,max_neighbours)
+    neighbour_array = range(1,max_neighbours)
     count_signal = 0
     lof_data = [ [] for _ in range(len(data['P_J306'])) ]
     for signal in signals:
@@ -32,7 +32,7 @@ def compute_lof(data, signals, max_neighbours):
 
 def plot_lof(lof_curvs, signals, max_neighbours, title):
     f,ax = plt.subplots(figsize=(22,3))
-    neighbour_array = range(2,max_neighbours)
+    neighbour_array = range(1,max_neighbours)
     x = np.array(neighbour_array)
     count = 0
     for elem in lof_curvs:
@@ -45,5 +45,5 @@ def plot_lof(lof_curvs, signals, max_neighbours, title):
         ax.set_xticks(neighbour_array)
         ax.set_yscale('log')
         ax.set_title(title)
-        ax = sns.lineplot(x="Number of neighbours used", y="Outliers detected", data=pd_data, label=signals[count])
+        g = sns.lineplot(x="Number of neighbours used", y="Outliers detected", data=pd_data, label=signals[count])
         count += 1
