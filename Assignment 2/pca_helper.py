@@ -46,11 +46,11 @@ def pre_process(data):
 	return tdata, labels
 
 def number_of_components_plot(pca, n_features, threshold):
-	fig, ax = plt.subplots(figsize=(22,6))
+	fig, ax = plt.subplots(figsize=(10,5))
 	x = np.arange(1, n_features+1, step=1)
 	y = np.cumsum(pca.explained_variance_ratio_)
 
-	plt.ylim(0.0,1.1)
+	plt.ylim(0.18,1.1)
 	plt.plot(x, y, marker='o', linestyle='--', color='b')
 
 	plt.xlabel('# Components', fontsize=14)
@@ -58,8 +58,9 @@ def number_of_components_plot(pca, n_features, threshold):
 	plt.ylabel('Cumulative variance (%)', fontsize=14)
 	plt.title('Number of components', fontsize=18)
 
-	plt.axhline(y=threshold, color='r', linestyle='-')
-	plt.text(0, 1.02, "{:.0f}%".format(threshold*100), color = 'red', fontsize=14)
+	plt.axhline(y=0.97, color='r', linestyle='-')
+	plt.text(38, 0.96, "{:.0f}%".format(97), color = 'red', fontsize=14)
+	plt.axvline(x=13, color='r', linestyle='-')
 
 	ax.grid(axis='x')
 	plt.show()
@@ -72,7 +73,7 @@ def number_of_components_plot(pca, n_features, threshold):
 		if cumsum > threshold:
 			break;
 
-	return n_components
+	return pca.components_
 
 
 
