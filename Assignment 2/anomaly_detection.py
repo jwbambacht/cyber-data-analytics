@@ -13,6 +13,7 @@ def compute_lof(data, signals, max_neighbours):
     lof_data = [ [] for _ in range(len(data['P_J306'])) ]
     for signal in signals:
         pref_lof = []
+        data[signal] = np.random.permutation(data[signal].values)
         for i in range(len(data[signal])):
             lof_data[i] = [data[signal][i]]
         for n in neighbour_array:
