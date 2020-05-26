@@ -80,7 +80,7 @@ def compute_ngram_matrix(data, data_in_buckets, signal, sliding_windows, n, step
     # Normalize all rows by their total value
     matrix = matrix.div(matrix.sum(axis=1), axis=0)
     return matrix
-
+# Returns the L most frequent n-grams in the data
 def get_most_freq_ngrams(data, threshold):
     # Count the total occurence of each N-gram 
     top_L = data.sum(axis=0)
@@ -94,36 +94,19 @@ def get_most_freq_ngrams(data, threshold):
     top_L = top_L[0:threshold].index
     return top_L
 
-# Method to find a suitable amount of groups
-# clustering dataset
-# determine k using elbow method
-# x1 = np.array(date_time_convert)
-# x2 = np.array(df['L_T3'])
+# Function to plot the anomalies in the specified range
+def plot_anomaly(signal_test, signal, indexes_of_signal, start, end):
+    # y-values     
+    y = np.array(signal_test[signal][start:end])
+    list_xvalues = list(range(start,end)) 
+    x = np.array(list_xvalues)
 
-# plt.plot()
-# # plt.xlim([0, 10])
-# # plt.ylim([0, 10])
-# plt.title('Dataset')
-# plt.scatter(x1, x2)
-# plt.show()
-
-# # create new plot and data
-# plt.plot()
-# X = np.array(list(zip(x1, x2))).reshape(len(x1), 2)
-# colors = ['b', 'g', 'r']
-# markers = ['o', 'v', 's']
-
-# # k means determine k
-# distortions = []
-# K = range(1,10)
-# for k in K:
-#     kmeanModel = KMeans(n_clusters=k).fit(X)
-#     kmeanModel.fit(X)
-#     distortions.append(sum(np.min(cdist(X, kmeanModel.cluster_centers_, 'euclidean'), axis=1)) / X.shape[0])
-
-# # # Plot the elbow
-# plt.plot(K, distortions, 'bx-')
-# plt.xlabel('k')
-# plt.ylabel('Distortion')
-# plt.title('The Elbow Method showing the optimal k')
-# plt.show()
+    # Anamolies should be marked red
+    threshold = 15
+    plt.figure()
+    # Plot the line
+    plt.plot(x, y, color='blue')
+    plt.title("Anomaly detection for signal " + str(signal))
+    plt.xlabel("Time")
+    plt.ylabel("Value of signal")
+    plt.scatter(x[np.in1d(x,indexes_of_signal)], y[np.in1d(x,indexes_of_signal)], color='red')
