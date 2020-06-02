@@ -21,5 +21,11 @@ def pre_process(data):
 	# Remove useless columns
 	data = data.drop(columns=["sTos","dTos","State"],axis=1)
 
+	# Create column that indicates the infected and non-infected hosts
+	infected_hosts_addr = ["147.32.84.165","147.32.84.191","147.32.84.192","147.32.84.193","147.32.84.204","147.32.84.205","147.32.84.206","147.32.84.207","147.32.84.208","147.32.84.209"]
+	data["Infected"] = 0
+	data.loc[data["SourceAddress"].isin(infected_hosts_addr),"Infected"] = 1
+
+	data['Protocol'] = data['Protocol'].str.upper() 
 
 	return data
