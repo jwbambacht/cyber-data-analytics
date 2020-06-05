@@ -39,6 +39,17 @@ def encode_feature(data):
 
 	return data
 
+def select_non_infected_host(data):
+	infected_hosts_addr = ["147.32.84.165","147.32.84.191","147.32.84.192","147.32.84.193","147.32.84.204","147.32.84.205","147.32.84.206","147.32.84.207","147.32.84.208","147.32.84.209"]
+
+	counts = list()
+
+	for host in infected_hosts_addr:
+		counts.append(len(data.loc[data["SourceAddress"] != host]))
+
+	return infected_hosts_addr[counts.index(max(counts))]
+
+
 def select_infected_host(data):
 	infected_hosts_addr = ["147.32.84.165","147.32.84.191","147.32.84.192","147.32.84.193","147.32.84.204","147.32.84.205","147.32.84.206","147.32.84.207","147.32.84.208","147.32.84.209"]
 
