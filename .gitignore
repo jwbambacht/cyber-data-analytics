@@ -131,3 +131,7 @@ dmypy.json
 .pyre/
 
 .DS_Store
+
+Assignment*3/data/
+Review/
+Other/
