@@ -132,4 +132,6 @@ dmypy.json
 
 .DS_Store
 
-"Assignment 3/data/"
+Assignment*3/data/
+Review/
+Other/
