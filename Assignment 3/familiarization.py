@@ -11,7 +11,7 @@ from sklearn.preprocessing import KBinsDiscretizer
 sns.set_style("darkgrid")
 
 def load_data(file_name):
-	data = pd.read_csv(file_name, sep=",",)
+	data = pd.read_csv(file_name, sep=",")
 	data.head()
 
 	return data
