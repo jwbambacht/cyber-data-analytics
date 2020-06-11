@@ -70,13 +70,21 @@ def select_infected_host(data, scenario):
 		infected_hosts_addr = ["147.32.84.165","147.32.84.191","147.32.84.192","147.32.84.193","147.32.84.204","147.32.84.205","147.32.84.206","147.32.84.207","147.32.84.208","147.32.84.209"]
 	elif scenario == 11 or scenario == 12:
 		infected_hosts_addr = ["147.32.84.165","147.32.84.191","147.32.84.192"]
+	return infected_hosts_addr    
+# 	counts = list()
 
-	counts = list()
+# 	for host in infected_hosts_addr:
+# 		counts.append(len(data.loc[data["SourceAddress"] == host]))
 
-	for host in infected_hosts_addr:
-		counts.append(len(data.loc[data["SourceAddress"] == host]))
+# 	return infected_hosts_addr[counts.index(max(counts))]
 
-	return infected_hosts_addr[counts.index(max(counts))]
+
+def select_non_infected_host(data):
+	data = data.loc[data["Infected"] == 0]
+
+	non_infected_hosts = data.SourceAddress.unique()
+	return non_infected_hosts
+
 
 def is_infected(source, scenario):
 	if scenario == 9 or scenario == 10:
