@@ -27,23 +27,6 @@ def pre_process(data, scenario):
 	# Remove useless columns
 	data = data.drop(columns=["sTos","dTos","State","Label"],axis=1)
 
-	data["Date"] = data["StartTime"]
-
-	data["Infected"] = data.apply(lambda row : finger.label(row["SourceAddress"], scenario),axis=1)
-
-	# for i in range(len(data)):
-	# 	source = data.SourceAddress.iloc[i]
-	# 	if is_infected(source,scenario):
-	# 		data.Infected.iloc[i] = 1
-	# 	elif is_normal(source):
-	# 		data.Infected.iloc[i] = 0
-	# 	else:
-	# 		data.Infected.iloc[i] = -1
-	
-	# data.loc[data["SourceAddress"].isin(infected_hosts_addr),"Infected"] = 1
-
-	data['Protocol'] = data['Protocol'].str.upper() 
-
 	data.sort_values(by=["StartTime"])
 
 	return data
