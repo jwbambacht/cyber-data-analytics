@@ -1,0 +1,24 @@
+Results - No training
+val set for benign : Average Loss: 0.2521, Accuracy: 84.38%
+val set for malicious : Average Loss: 0.2419, Accuracy: 92.11%
+val set for malicious (evasion using dfgsm_k): Average Loss: 0.2753, Accuracy: 91.18%
+val set overall: Average Loss: 0.2470, Accuracy: 88.24%
+{'bscn_num_pts': 14.0, 'bscn_exp_pts': 9120, 'mal': {'total_loss': 735.2558048963547, 'total_correct': 2800, 'total': 3040, 'evasion': {'total_loss': 837.039320319891, 'total_correct': 2772, 'total': 3040}}, 'bon': {'total_loss': 766.3473893404007, 'total_correct': 2565, 'total': 3040}}
+test set for benign : Average Loss: 0.2377, Accuracy: 85.62%
+test set for malicious : Average Loss: 0.2426, Accuracy: 92.53%
+test set for malicious (evasion using dfgsm_k): Average Loss: 0.2824, Accuracy: 91.58%
+test set overall: Average Loss: 0.2401, Accuracy: 89.08%
+{'bscn_num_pts': 14.0, 'bscn_exp_pts': 9120, 'mal': {'total_loss': 737.5104151368141, 'total_correct': 2813, 'total': 3040, 'evasion': {'total_loss': 858.5303854048252, 'total_correct': 2784, 'total': 3040}}, 'bon': {'total_loss': 722.4623903036118, 'total_correct': 2603, 'total': 3040}}
+
+
+Results - Training (10 epoches)
+val set for benign : Average Loss: 0.2406, Accuracy: 89.21%
+val set for malicious : Average Loss: 0.1873, Accuracy: 90.66%
+val set for malicious (evasion using dfgsm_k): Average Loss: 0.2629, Accuracy: 87.99%
+val set overall: Average Loss: 0.2139, Accuracy: 89.93%
+{'bscn_num_pts': 16.0, 'bscn_exp_pts': 9120, 'mal': {'total_loss': 569.4008292257786, 'total_correct': 2756, 'total': 3040, 'evasion': {'total_loss': 799.095941901207, 'total_correct': 2675, 'total': 3040}}, 'bon': {'total_loss': 731.3799671828747, 'total_correct': 2712, 'total': 3040}}
+test set for benign : Average Loss: 0.2233, Accuracy: 90.16%
+test set for malicious : Average Loss: 0.1881, Accuracy: 90.92%
+test set for malicious (evasion using dfgsm_k): Average Loss: 0.2653, Accuracy: 88.55%
+test set overall: Average Loss: 0.2057, Accuracy: 90.54%
+{'bscn_num_pts': 16.0, 'bscn_exp_pts': 9120, 'mal': {'total_loss': 571.8624178767204, 'total_correct': 2764, 'total': 3040, 'evasion': {'total_loss': 806.6251100301743, 'total_correct': 2692, 'total': 3040}}, 'bon': {'total_loss': 678.9461027383804, 'total_correct': 2741, 'total': 3040}}
