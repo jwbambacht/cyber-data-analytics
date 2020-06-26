@@ -23,6 +23,7 @@ def bar_plot(dataset1, dataset2, columns, dataset_name1, dataset_name2):
     plt.ylabel('Frequency')
     plt.xticks([r + barWidth for r in range(len(bars1))], columns)
     plt.title("Top k features with largest difference between " + dataset_name1 + " and " + dataset_name2 + " data")
+    plt.xticks(rotation=45)
     # Create legend & Show graphic
     plt.legend()
     plt.show()
